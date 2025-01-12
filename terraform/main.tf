@@ -1,7 +1,11 @@
 # Main Terraform file to initialize VMs and AKS in Azure
 
 provider "azurerm" {
-    features {}
+    features {
+        resource_group {
+            prevent_deletion_if_contains_resources = false
+        }
+    }
     subscription_id = var.subscription_id
 }
 
@@ -75,21 +79,21 @@ resource "azurerm_public_ip" "sonarqube" {
     name                = "sonarqube-pip"
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
-    allocation_method   = "Dynamic"
+    allocation_method   = "Static"
 }
 
 resource "azurerm_public_ip" "jenkins" {
     name                = "jenkins-pip"
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
-    allocation_method   = "Dynamic"
+    allocation_method   = "Static"
 }
 
 resource "azurerm_public_ip" "nexus" {
     name                = "nexus-pip"
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
-    allocation_method   = "Dynamic"
+    allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "sonarqube" {
