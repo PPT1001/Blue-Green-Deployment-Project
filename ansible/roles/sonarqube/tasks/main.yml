@@ -1,5 +1,17 @@
+- name: Check if SonarQube container exists
+  docker_container_info:
+    name: sonarqube
+  register: sonarqube_info
+
 - name: Run SonarQube Docker Container
-  command: |
-    if ! docker ps -q -f name=sonarqube; then
-      docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
-    fi
+  docker_container:
+    name: sonarqube
+    image: sonarqube:lts-community
+    state: started
+    ports:
+      - "9000:9000"
+  when: not sonarqube_info.exists
+
+- name: Display SonarQube container status
+  debug:
+    msg: "SonarQube container is {{ 'running' if sonarqube_info.exists else 'started' }}"
