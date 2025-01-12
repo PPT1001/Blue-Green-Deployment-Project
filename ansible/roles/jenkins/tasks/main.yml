@@ -1,0 +1,17 @@
+- name: Install Jenkins
+  apt_repository:
+    repo: "deb http://pkg.jenkins.io/debian-stable binary/"
+    state: present
+  notify:
+    - Add Jenkins GPG key
+
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: present
+
+- name: Start and enable Jenkins
+  systemd:
+    name: jenkins
+    enabled: yes
+    state: started
