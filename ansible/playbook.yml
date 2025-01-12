@@ -48,3 +48,4 @@
   roles:
     - jenkins
     - trivy
+    - kubectl
