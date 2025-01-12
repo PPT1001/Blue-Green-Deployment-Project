@@ -1,0 +1,5 @@
+- name: Run SonarQube Docker Container
+  command: |
+    if ! docker ps -q -f name=sonarqube; then
+      docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+    fi
