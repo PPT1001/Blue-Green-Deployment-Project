@@ -1,0 +1,4 @@
+- name: Download and install Nexus
+  command: |
+    docker run -d --name nexus -p 8081:8081 sonatype/nexus3
+    docker ps -a
