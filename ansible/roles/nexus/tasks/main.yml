@@ -1,4 +1,18 @@
-- name: Download and install Nexus
-  command: |
-    docker run -d --name nexus -p 8081:8081 sonatype/nexus3
-    docker ps -a
+- name: Check if Nexus container exists
+  docker_container_info:
+    name: nexus
+  register: nexus_container
+
+- name: Create Nexus container
+  docker_container:
+    name: nexus
+    image: sonatype/nexus3
+    state: started
+    ports:
+      - "8081:8081"
+  when: not nexus_container.exists
+
+- name: Display Nexus container status
+  debug:
+    msg: "Nexus container is {{ 'running' if nexus_container.exists else 'created' }}"
+    
