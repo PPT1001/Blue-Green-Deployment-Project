@@ -34,6 +34,11 @@
     state: present
     update_cache: yes
 
+- name: Install Docker Python package
+  ansible.builtin.apt:
+    name: python3-docker
+    state: present
+
 - name: Add user to docker group
   ansible.builtin.user:
     name: "{{ ansible_ssh_user }}"
