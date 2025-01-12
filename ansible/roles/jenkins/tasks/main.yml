@@ -1,9 +1,19 @@
-- name: Install Jenkins
-  apt_repository:
-    repo: "deb http://pkg.jenkins.io/debian-stable binary/"
-    state: present
-  notify:
-    - Add Jenkins GPG key
+- name: Download Jenkins GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: '0644'
+    validate_certs: yes
+
+- name: Add Jenkins repository
+  copy:
+    content: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+    dest: /etc/apt/sources.list.d/jenkins.list
+    mode: '0644'
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
 
 - name: Install Jenkins
   apt:
@@ -15,3 +25,18 @@
     name: jenkins
     enabled: yes
     state: started
+
+- name: Add Jenkins to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Restart Jenkins
+  systemd:
+    name: jenkins
+    state: restarted
+
+- name: Display Jenkins status
+  debug:
+    msg: "Jenkins is running"
