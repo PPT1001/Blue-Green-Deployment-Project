@@ -31,11 +31,13 @@
     name: jenkins
     groups: docker
     append: yes
+  register: docker_group_add
 
 - name: Restart Jenkins
   systemd:
     name: jenkins
     state: restarted
+  when: docker_group_add.changed
 
 - name: Display Jenkins status
   debug:
