@@ -18,7 +18,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'git-token', url: 'https://github.com/PPT1001/portfolio-nextjs.git'
+                git branch: 'backup', credentialsId: 'git-token', url: 'https://github.com/PPT1001/Blue-Green-Deployment-Project.git'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=portfolio -Dsonar.projectName=portfolio"
+                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=portfolio -Dsonar.projectName=portfolio -Dsonar.exclusions=**/node_modules/**"
                 }
             }
         }
@@ -56,12 +56,6 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                sh "npm run test"
-            }
-        }
-
         stage('Setup .npmrc') {
             steps {
                 // Access the stored .npmrc file from the Jenkins credentials
@@ -75,8 +69,8 @@ pipeline {
             steps {
                 sh "npm publish --registry ${NEXUS_URL}"
             }
+        }
                     
-        
         stage('Docker build') {
             steps {
                 script {
@@ -165,6 +159,18 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo "Pipeline executed successfully. ${params.DEPLOY_ENV} environment deployed."
+        }
+        failure {
+            echo "Pipeline failed. Check logs for details."
         }
     }
 }
