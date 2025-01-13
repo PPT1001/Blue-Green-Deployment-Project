@@ -29,6 +29,10 @@ This repository demonstrates a complete CI/CD pipeline for implementing **Blue-G
 ├── app-deployment-green.yml    # Green environment Kubernetes deployment
 ├── portfolio-service.yml       # LoadBalancer to switch between deployments
 ├── cluster_config              # Kubernetes cluster configuration
+│   ├── role.yml
+│   ├── rolebinding.yml
+│   ├── sec.yml
+│   └── service_account.yml
 ├── components                  # Modular React components
 ├── terraform                   # Terraform configuration for infrastructure provisioning
 │   ├── main.tf
