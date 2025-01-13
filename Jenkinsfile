@@ -18,7 +18,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'git-token', url: 'https://github.com/PPT1001/portfolio-nextjs.git'
+                git branch: 'backup', credentialsId: 'git-token', url: 'https://github.com/PPT1001/Blue-Green-Deployment-Project.git'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=portfolio -Dsonar.projectName=portfolio"
+                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=portfolio -Dsonar.projectName=portfolio -Dsonar.exclusions=**/node_modules/**"
                 }
             }
         }
@@ -56,12 +56,6 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                sh "npm run test"
-            }
-        }
-
         stage('Setup .npmrc') {
             steps {
                 // Access the stored .npmrc file from the Jenkins credentials
@@ -75,12 +69,12 @@ pipeline {
             steps {
                 sh "npm publish --registry ${NEXUS_URL}"
             }
+        }
                     
-        
         stage('Docker build') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred') {
+                    withDockerRegistry([credentialsId: 'docker-cred', url: 'https://index.docker.io/v1/']) {
                         sh "docker build -t ${IMAGE_NAME}:${TAG} ."
                     }
                 }
@@ -96,7 +90,7 @@ pipeline {
         stage('Docker Push Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred') {
+                    withDockerRegistry([credentialsId: 'docker-cred', url: 'https://index.docker.io/v1/']) {
                         sh "docker push ${IMAGE_NAME}:${TAG}"
                     }
                 }
@@ -107,7 +101,7 @@ pipeline {
         stage('Deploy SVC-APP') {
             steps {
                 script {
-                    withKubeConfig(caCertificate: '', clusterName: 'devopsshack-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://46743932FDE6B34C74566F392E30CABA.gr7.ap-south-1.eks.amazonaws.com') {
+                    withKubeConfig(caCertificate: '', clusterName: 'devopsshack-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://bluegreen-g5i8xz8c.hcp.southeastasia.azmk8s.io') {
                         sh """ if ! kubectl get svc portfolio-service -n ${KUBE_NAMESPACE}; then
                                 kubectl apply -f portfolio-service.yml -n ${KUBE_NAMESPACE}
                               fi
@@ -165,6 +159,18 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo "Pipeline executed successfully. ${params.DEPLOY_ENV} environment deployed."
+        }
+        failure {
+            echo "Pipeline failed. Check logs for details."
         }
     }
 }

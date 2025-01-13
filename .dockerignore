@@ -1,0 +1,22 @@
+# Ansible files
+*.yml
+*.yaml
+ansible/
+inventory/
+playbooks/
+roles/
+group_vars/
+host_vars/
+
+# Terraform files
+*.tf
+*.tfvars
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform/
+
+# Ignore other files
+init.sh 
+Jenkinsfile
+cluster_config/
