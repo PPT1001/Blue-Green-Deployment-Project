@@ -18,7 +18,7 @@ spec:
       - name: portfolio
         image: ppt1001/portfolio:blue # Adjust the image tag for the blue version
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
         resources:
           requests:
             memory: "500Mi"
