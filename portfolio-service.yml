@@ -4,9 +4,12 @@ metadata:
   name: portfolio-service
 spec:
   type: LoadBalancer
+  sessionAffinity: ClientIP
   ports:
   - port: 80
     targetPort: 3000
+    protocol: TCP
+    name: http
   selector:
     app: portfolio
     version: blue
