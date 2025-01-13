@@ -1,3 +1,7 @@
+output "subscription_id" {
+  value = var.subscription_id
+}
+
 output "vm_ips" {
   value = {
     sonarqube = azurerm_linux_virtual_machine.sonarqube.public_ip_address
@@ -31,3 +35,10 @@ ${azurerm_linux_virtual_machine.nexus.public_ip_address} ansible_ssh_user=azureu
 EOT
 }
 
+output "aks_cluster_name" {
+  value = var.aks_cluster_name
+}
+
+output "aks_cluster_rg" {
+  value = var.resource_group_name
+}

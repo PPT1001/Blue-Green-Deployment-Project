@@ -238,7 +238,7 @@ resource "azurerm_linux_virtual_machine" "nexus" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-    name                = "blue-green-aks"
+    name                = var.aks_cluster_name
     location            = azurerm_resource_group.main.location
     resource_group_name = azurerm_resource_group.main.name
     dns_prefix          = "bluegreen"
