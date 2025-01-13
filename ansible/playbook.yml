@@ -49,4 +49,3 @@
     - jenkins
     - trivy
     - kubectl
-    - npm
