@@ -69,8 +69,3 @@ echo "$inventory" > inventory.ini
 
 # Run the ansible playbook
 ansible-playbook -i inventory.ini playbook.yml --ssh-common-args='-o StrictHostKeyChecking=no'
-
-if [ $? -ne 0 ]; then
-    echo "Error occurred while running the ansible playbook"
-    exit 1
-fi
